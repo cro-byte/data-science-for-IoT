@@ -1,0 +1,68 @@
+
+
+
+import json
+import time
+import os
+import psutil
+from gpiozero import Button
+import math
+import statistics
+
+lastConnectionTime = time.time()
+lastUpdateTime = time.time()
+postingInterval = 900
+updateInterval = 60
+writeAPIkey = "YOUR_WRITE_API_KEY"
+channelID = "YOUR_CHANNEL_ID"
+url = "https://api.thingspeak.com/channels/" + channelID + "/bulk_update.json"
+messageBuffer = []
+
+def httpRequest():
+    global lastConnectionTime
+    lastConnectionTime = time.time()
+    # Implement your HTTP request logic here
+
+def updatesJson():
+    # Implement your logic for updating JSON data
+    pass
+
+def calculate_speed(time_sec):
+    global wind_count
+    circumference_cm = (2 * math.pi) * radius_cm
+    rotations = wind_count / 2.0
+    dist_km = circumference_cm * rotations / 100000.0  # Convert to kilometers
+    speed = dist_km / time_sec
+    return speed
+
+def mean(speed_list):
+    return statistics.mean(speed_list)
+
+wind_speed_sensor = Button(5)
+wind_count = 0
+radius_cm = 9.0
+wind_interval = 5
+speed_list = []
+
+def spin():
+    global wind_count
+    wind_count = wind_count + 1
+
+wind_speed_sensor.when_pressed = spin
+
+while True:
+    wind_count = 0
+    time.sleep(wind_interval)
+    wind_speed = calculate_speed(wind_interval)
+    speed_list.append(wind_speed)
+    print("Wind Speed:", wind_speed, "km/h")
+    print("Mean Wind Speed:", mean(speed_list), "km/h")
+```
+
+while mean(speed_list) > 9 or <18 
+    if True 
+        print("het is tijd om te zeilen")
+    if False 
+        print("geen reden om naar buiten te gaan")
+    
+    
