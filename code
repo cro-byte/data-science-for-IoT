@@ -1,13 +1,12 @@
 
 
-
 import json
 import time
 import os
-import psutil
 from gpiozero import Button
 import math
 import statistics
+import requests
 
 lastConnectionTime = time.time()
 lastUpdateTime = time.time()
@@ -18,15 +17,47 @@ channelID = "YOUR_CHANNEL_ID"
 url = "https://api.thingspeak.com/channels/" + channelID + "/bulk_update.json"
 messageBuffer = []
 
-def httpRequest():
+def httpRequest(data):
     global lastConnectionTime
     lastConnectionTime = time.time()
-    # Implement your HTTP request logic here
+    
+    headers = {'Content-Type': 'application/json'}
+    params = {'api_key': writeAPIkey}
+    response = requests.post(url, headers=headers, params=params, json=data)
+
+    if response.status_code == 200:
+        print("Data sent successfully to ThingSpeak")
+    else:
+        print("Failed to send data. Status code:", response.status_code)
 
 def updatesJson():
+    data = {
+        'write_api_key': writeAPIkey,
+        'updates': [
+            {'field1': mean(speed_list)}  # Update 'field1' with the mean wind speed
+            # Add more fields as needed
+        ]
+    }
+    httpRequest(data)
+
+# Rest of your code remains unchanged...
+
+if __name__ == "__main__":
+    while 1:
+        if time.time() - lastUpdateTime >= updateInterval:
+            updatesJson()
+
+    while mean(speed_list) > 9 and mean(speed_list) < 18:
+        if True:
+            print("het is tijd om te zeilen")
+        if False:
+            print("geen reden om naar buiten te gaan")
+
+
     # Implement your logic for updating JSON data
     pass
-
+# om de wind snelheid te berekenen gebruik ik een reed switch, die aan gaat wanneer een magneet langs gaat.
+# wanneer de as (met een magneet) van de anemometer langs 
 def calculate_speed(time_sec):
     global wind_count
     circumference_cm = (2 * math.pi) * radius_cm
@@ -58,6 +89,10 @@ while True:
     print("Wind Speed:", wind_speed, "km/h")
     print("Mean Wind Speed:", mean(speed_list), "km/h")
 ```
+if __name__ == "__main__":
+    while 1:
+        if time.time() - lastUpdateTime >= updateInterval:
+            updatesJson()
 
 while mean(speed_list) > 9 or <18 
     if True 
